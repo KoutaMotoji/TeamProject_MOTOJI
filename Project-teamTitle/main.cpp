@@ -11,6 +11,7 @@
 #include "tutorial.h"
 #include "game.h"
 #include "result.h"
+#include "ranking.h"
 
 //マクロ定義
 #define CLASS_NAME	"WindowClass" //ウィンドウクラスの名前
@@ -233,18 +234,13 @@ HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 		return E_FAIL;
 	}
 
-	//InitDebugProc();
-
 	SetMode(g_mode);
-
-
 
 	return S_OK;
 }
 //終了処理
 void Uninit(void)
 {
-
 	//タイトル終了
 	UninitTitle();
 
@@ -259,8 +255,10 @@ void Uninit(void)
 	//キーボードの終了処理
 	UninitKeyboard();
 
+	//ランキングの終了
+	UninitRanking();
+
 	UninitJoypad();
-	//UninitDebugProc();
 
 	//Direct3Dデバイスの破棄
 	if (g_pD3DDevice != NULL)
@@ -296,18 +294,15 @@ void Update(void)
 	case MODE_RESULT:
 		UpdateResult();
 		break;
-		//case MODE_LOSE:
-		//	UpdateGameOver();
-		//	break;
+	case MODE_RANKING:
+		UpdateRanking();
+		break;
 	}
-
-
 	// キーボードの更新処理
 	UpdateKeyboard();
 
 	UpdateJoypad();
 	//各画面処理分岐
-
 }
 //描画処理
 void Draw(void)
@@ -319,9 +314,10 @@ void Draw(void)
 	//描画開始
 	if (SUCCEEDED(g_pD3DDevice->BeginScene()))
 	{//描画開始が成功した場合
-			//--------------------------------
-			//各種オブジェクトの描画処理
-			//--------------------------------
+		//--------------------------------
+		//各種オブジェクトの描画処理
+		//--------------------------------
+
 		//ポリゴンの描画処理
 		//分岐
 		switch (g_mode)
@@ -338,14 +334,11 @@ void Draw(void)
 		case MODE_RESULT:
 			DrawResult();
 			break;
-			//case MODE_LOSE:
-			//	DrawGameOver();
-			//	break;
+		case MODE_RANKING:
+			DrawRanking();
+			break;
 		}
 
-	
-		//DrawModel();
-		//DrawDebugProc();
 		//描画終了
 		g_pD3DDevice->EndScene();
 		//バックバッファとフロントバッファの入れ替え
@@ -353,18 +346,16 @@ void Draw(void)
 	}
 
 }
+
 //デバイスの取得
 LPDIRECT3DDEVICE9 GetDevice(void)
 {
 	return g_pD3DDevice;
 }
 
-
-
 //ウィンドウプロシージャ
 LRESULT CALLBACK WIndowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-
 	int nID;
 	//HWND hWndButtonReset;
 	switch (uMsg)
@@ -424,9 +415,9 @@ void SetMode(MODE mode)
 	case MODE_RESULT:
 		UninitResult();
 		break;
-		//case MODE_LOSE:
-		//	UninitGameOver();
-		//	break;
+	case MODE_RANKING:
+		UninitRanking();
+		break;
 	}
 	//新しい画面の初期化処理
 	switch (mode)
@@ -443,9 +434,9 @@ void SetMode(MODE mode)
 	case MODE_RESULT:
 		InitResult();
 		break;
-		//case MODE_LOSE:
-		//	InitGameOver();
-		//	break;
+	case MODE_RANKING:
+		InitRanking();
+		break;
 	}
 	g_mode = mode;
 }
@@ -460,6 +451,7 @@ void SetExitGame(void)
 {
 	g_bExit = true;
 }
+
 int GetFPS(void)
 {
 	return g_nCountFPS;

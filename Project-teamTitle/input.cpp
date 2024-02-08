@@ -16,7 +16,6 @@ BYTE g_aKeyStateTrigger[NUM_KEY_MAX];
 XINPUT_STATE g_joyKeyState;
 XINPUT_STATE g_joyKeyStateTrigger;
 
-
 //キーボードの初期化設定
 HRESULT InitKeyboard(HINSTANCE hInstace, HWND hWnd)
 {

@@ -4,12 +4,13 @@
 //								制作：元地弘汰
 // 
 //===============================================================================
+#include "title.h"
 #include "title_select.h"
 #include "player_count.h"
 #include "input.h"
 
-#define DEFTITLE_SELECT	(6)
-#define TITLE_SELECT_COUNT	(3)
+#define DEFTITLE_SELECT	(8)
+#define TITLE_SELECT_COUNT	(4)
 
 #define TITLE_ANY_HEIGHT			(100)
 #define TITLE_START_WIDTH			(200)
@@ -22,9 +23,11 @@ static const char* TitleSelectName[DEFTITLE_SELECT]
 {
 	"data\\TEXTURE\\Title\\start0.png",			//スタート選択
 	"data\\TEXTURE\\Title\\tutorial0.png",		//チュートリアル選択
+	"data\\TEXTURE\\Title\\ranking0.png",		//チュートリアル選択
 	"data\\TEXTURE\\Title\\finish0.png",		//終了選択
 	"data\\TEXTURE\\Title\\start1.png",			//スタート非選択
 	"data\\TEXTURE\\Title\\tutorial1.png",		//チュートリアル非選択
+	"data\\TEXTURE\\Title\\ranking1.png",		//チュートリアル選択
 	"data\\TEXTURE\\Title\\finish1.png",		//終了非選択
 };
 //選択肢の列挙
@@ -32,6 +35,7 @@ enum
 {//何が選択されてるかな？
 	SELECTED_START = 0,
 	SELECTED_TUTORIAL,
+	SELECTED_RANKING,
 	SELECTED_FINISH
 };
 //選択肢の構造体
@@ -91,11 +95,17 @@ void InitTitleSelect(void)
 			TitleInfo[i].Type = SELECT_TITLE_TUTORIAL_OFF;
 			TitleInfo[i].pos = D3DXVECTOR3(300, 400, 0);
 			break;
-		case SELECTED_FINISH:		//選択：終了
+		case SELECTED_RANKING:		//選択：ランキング
+			TitleInfo[i].fAngle = atan2f(TITLE_TUTORIAL_WIDTH, TITLE_ANY_HEIGHT);
+			TitleInfo[i].fLength = sqrtf(TITLE_TUTORIAL_WIDTH * TITLE_TUTORIAL_WIDTH + TITLE_ANY_HEIGHT * TITLE_ANY_HEIGHT) / 2.0f;
+			TitleInfo[i].Type = SELECT_TITLE_RANKING_OFF;
+			TitleInfo[i].pos = D3DXVECTOR3(300, 500, 0);
+			break;
+		case SELECTED_FINISH:		//選択：選択
 			TitleInfo[i].fAngle = atan2f(TITLE_FINISH_WIDTH, TITLE_ANY_HEIGHT);
 			TitleInfo[i].fLength = sqrtf(TITLE_FINISH_WIDTH * TITLE_FINISH_WIDTH + TITLE_ANY_HEIGHT * TITLE_ANY_HEIGHT) / 2.0f;
 			TitleInfo[i].Type = SELECT_TITLE_FINISH_OFF;
-			TitleInfo[i].pos = D3DXVECTOR3(300, 500, 0);
+			TitleInfo[i].pos = D3DXVECTOR3(300, 600, 0);
 			break;
 		}
 	}
@@ -211,17 +221,26 @@ void UpdateTitleSelect(void)
 		case SELECTED_START:		//選択：スタート
 			TitleInfo[0].Type = SELECT_TITLE_START_ON;
 			TitleInfo[1].Type = SELECT_TITLE_TUTORIAL_OFF;
-			TitleInfo[2].Type = SELECT_TITLE_FINISH_OFF;
+			TitleInfo[2].Type = SELECT_TITLE_RANKING_OFF;
+			TitleInfo[3].Type = SELECT_TITLE_FINISH_OFF;
 			break;
 		case SELECTED_TUTORIAL:		//選択：チュートリアル
 			TitleInfo[0].Type = SELECT_TITLE_START_OFF;
 			TitleInfo[1].Type = SELECT_TITLE_TUTORIAL_ON;
-			TitleInfo[2].Type = SELECT_TITLE_FINISH_OFF;
+			TitleInfo[2].Type = SELECT_TITLE_RANKING_OFF;
+			TitleInfo[3].Type = SELECT_TITLE_FINISH_OFF;
+			break;
+		case SELECTED_RANKING:		//選択：ランキング
+			TitleInfo[0].Type = SELECT_TITLE_START_OFF;
+			TitleInfo[1].Type = SELECT_TITLE_TUTORIAL_OFF;
+			TitleInfo[2].Type = SELECT_TITLE_RANKING_ON;
+			TitleInfo[3].Type = SELECT_TITLE_FINISH_OFF;
 			break;
 		case SELECTED_FINISH:		//選択：終了
 			TitleInfo[0].Type = SELECT_TITLE_START_OFF;
 			TitleInfo[1].Type = SELECT_TITLE_TUTORIAL_OFF;
-			TitleInfo[2].Type = SELECT_TITLE_FINISH_ON;
+			TitleInfo[2].Type = SELECT_TITLE_RANKING_OFF;
+			TitleInfo[3].Type = SELECT_TITLE_FINISH_ON;
 			break;
 		}
 	}
@@ -298,6 +317,10 @@ void UpdateTitleSelect(void)
 		if (nSelectTitle == SELECTED_FINISH)
 		{//もし終了が選択されていたら
 			SetExitGame();			//ゲーム終了させる
+		}
+		else if (nSelectTitle == SELECTED_RANKING)
+		{
+			MovetoRanking();
 		}
 		else
 		{//それ以外なら
