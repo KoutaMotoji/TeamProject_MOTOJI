@@ -1,0 +1,467 @@
+//===============================================================================
+//
+//  3Dチーム制作(title_select.cpp)
+//								制作：元地弘汰
+// 
+//===============================================================================
+#include "player_count.h"
+#include "title_select.h"
+#include "input.h"
+
+#define SELECT_TEXCOUNT	(11)		//テクスチャの数
+#define SELECT_USE_POLY	(7)
+#define SELECT_BASE_POS_X	(SCREEN_WIDTH * 0.5+ 200)
+
+//テクスチャ列挙
+static const char* PSelCnt[SELECT_TEXCOUNT]
+{
+	"data\\TEXTURE\\SelectCnt\\pSelect.png",	//鎖付いた板
+	"data\\TEXTURE\\SelectCnt\\gear_l.png",		//左の歯車
+	"data\\TEXTURE\\SelectCnt\\gear_r.png",		//右に歯車
+	"data\\TEXTURE\\SelectCnt\\p1_on.png",		//一人色付き
+	"data\\TEXTURE\\SelectCnt\\p2_on.png",		//二人色付き
+	"data\\TEXTURE\\SelectCnt\\p3_on.png",		//三人色付き
+	"data\\TEXTURE\\SelectCnt\\p4_on.png",		//四人色付き
+	"data\\TEXTURE\\SelectCnt\\p1_off.png",		//一人色なし
+	"data\\TEXTURE\\SelectCnt\\p2_off.png",		//二人色なし
+	"data\\TEXTURE\\SelectCnt\\p3_off.png",		//三人色なし
+	"data\\TEXTURE\\SelectCnt\\p4_off.png",		//四人色なし
+};
+
+//テクスチャ割り当て(順は上に〃)
+typedef enum
+{
+	TEXTYPE_BASE = 0,
+	TEXTYPE_GEAR_L,
+	TEXTYPE_GEAR_R,
+	TEXTYPE_PLAYER1_ON,
+	TEXTYPE_PLAYER2_ON,
+	TEXTYPE_PLAYER3_ON,
+	TEXTYPE_PLAYER4_ON,
+	TEXTYPE_PLAYER1_OFF,
+	TEXTYPE_PLAYER2_OFF,
+	TEXTYPE_PLAYER3_OFF,
+	TEXTYPE_PLAYER4_OFF,
+	TEXTYPE_MAX
+}SELECT_TYPE;
+
+//プレイヤーセレクト用構造体
+typedef struct
+{
+	D3DXVECTOR3 pos;
+	D3DXVECTOR3 rot;
+	float fHeight;
+	float fWidth;
+	float fAngle;
+	float fLength;
+	int Type;
+}PLAYERSELECT;
+
+//グローバル変数
+LPDIRECT3DTEXTURE9 g_pTexturePlayerCount[SELECT_TEXCOUNT] = {};
+LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffPlayerCount = NULL;
+int nSelectPlayerCnt;		//人数選択用変数
+float nZoomSelectPCnt;		//ズームイン・アウト用
+bool bSelectPlayerAnim;		//アニメーション判定用
+bool AnimFinish;			//アニメーション終了判定
+PLAYERSELECT PlayerSelect[SELECT_USE_POLY];			//プレイヤー選択構造体
+
+//===============================================================================
+//人数選択画面の初期化処理
+//===============================================================================
+void InitPlayerCount(void)
+{
+
+	LPDIRECT3DDEVICE9 pDevice;
+	//デバイスの取得
+	pDevice = GetDevice();
+	for (int i = 0; i < SELECT_TEXCOUNT; i++)
+	{
+		//テクスチャの読み込み
+		D3DXCreateTextureFromFile(pDevice,
+			PSelCnt[i],
+			&g_pTexturePlayerCount[i]);
+	}
+
+	//頂点バッファの生成
+	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4 * SELECT_USE_POLY,
+		D3DUSAGE_WRITEONLY,
+		FVF_VERTEX_2D,
+		D3DPOOL_MANAGED,
+		&g_pVtxBuffPlayerCount,
+		NULL);
+
+	for (int i = 0; i < SELECT_USE_POLY; i++)
+	{
+		PlayerSelect[i].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);//一応初期化
+		switch (i)
+		{
+		case TEXTYPE_BASE:		
+			PlayerSelect[i].pos = D3DXVECTOR3(SELECT_BASE_POS_X, -360, 0);
+			PlayerSelect[i].fWidth = 300;
+			PlayerSelect[i].fHeight = 720;
+			PlayerSelect[i].Type = i;
+			break;
+		case TEXTYPE_GEAR_L:
+			PlayerSelect[i].pos = D3DXVECTOR3(SELECT_BASE_POS_X - 160.0f, 0.0f, 0);
+			PlayerSelect[i].fWidth = 70;
+			PlayerSelect[i].fHeight = 70;
+			PlayerSelect[i].Type = i;
+			break;
+		case TEXTYPE_GEAR_R:
+			PlayerSelect[i].pos = D3DXVECTOR3(SELECT_BASE_POS_X + 160.0f, 0.0f, 0);
+			PlayerSelect[i].fWidth = 70;
+			PlayerSelect[i].fHeight = 70;
+			PlayerSelect[i].Type = i;
+			break;
+		case TEXTYPE_PLAYER1_ON:
+			PlayerSelect[i].pos = D3DXVECTOR3(SELECT_BASE_POS_X, -300, 0);
+			PlayerSelect[i].fWidth = 120;
+			PlayerSelect[i].fHeight = 50;
+			PlayerSelect[i].Type = TEXTYPE_PLAYER1_ON;
+			break;
+		case TEXTYPE_PLAYER2_ON:
+			PlayerSelect[i].pos = D3DXVECTOR3(SELECT_BASE_POS_X, -300, 0);
+			PlayerSelect[i].fWidth = 120;
+			PlayerSelect[i].fHeight = 50;
+			PlayerSelect[i].Type = TEXTYPE_PLAYER2_OFF;
+			break;
+		case TEXTYPE_PLAYER3_ON:
+			PlayerSelect[i].pos = D3DXVECTOR3(SELECT_BASE_POS_X, -300, 0);
+			PlayerSelect[i].fWidth = 120;
+			PlayerSelect[i].fHeight = 50;
+			PlayerSelect[i].Type = TEXTYPE_PLAYER3_OFF;
+			break;
+		case TEXTYPE_PLAYER4_ON:
+			PlayerSelect[i].pos = D3DXVECTOR3(SELECT_BASE_POS_X, -300, 0);
+			PlayerSelect[i].fWidth = 120;
+			PlayerSelect[i].fHeight = 50;
+			PlayerSelect[i].Type = TEXTYPE_PLAYER4_OFF;
+			break;
+		}
+		PlayerSelect[i].fAngle = atan2f(PlayerSelect[i].fWidth, PlayerSelect[i].fHeight);
+		PlayerSelect[i].fLength = sqrtf(PlayerSelect[i].fWidth * PlayerSelect[i].fWidth + PlayerSelect[i].fHeight * PlayerSelect[i].fHeight) / 2;
+	}
+	VERTEX_2D* pVtx;	//頂点情報のポインタ
+
+	//頂点バッファをロックして、頂点情報へのポインタを取得
+	g_pVtxBuffPlayerCount->Lock(0, 0, (void**)&pVtx, 0);
+
+	for (int nCnt = 0; nCnt < SELECT_USE_POLY; nCnt++)
+	{
+
+		//頂点座標の設定
+		pVtx[0].pos.x = PlayerSelect[nCnt].pos.x + sinf(PlayerSelect[nCnt].rot.z - (D3DX_PI - PlayerSelect[nCnt].fAngle)) * PlayerSelect[nCnt].fLength;
+		pVtx[0].pos.y = PlayerSelect[nCnt].pos.y + cosf(PlayerSelect[nCnt].rot.z - (D3DX_PI - PlayerSelect[nCnt].fAngle)) * PlayerSelect[nCnt].fLength;
+		pVtx[0].pos.z = 0.0f;
+
+		pVtx[1].pos.x = PlayerSelect[nCnt].pos.x + sinf(PlayerSelect[nCnt].rot.z + (D3DX_PI - PlayerSelect[nCnt].fAngle)) * PlayerSelect[nCnt].fLength;
+		pVtx[1].pos.y = PlayerSelect[nCnt].pos.y + cosf(PlayerSelect[nCnt].rot.z + (D3DX_PI - PlayerSelect[nCnt].fAngle)) * PlayerSelect[nCnt].fLength;
+		pVtx[1].pos.z = 0.0f;
+
+		pVtx[2].pos.x = PlayerSelect[nCnt].pos.x + sinf(PlayerSelect[nCnt].rot.z - PlayerSelect[nCnt].fAngle) * PlayerSelect[nCnt].fLength;
+		pVtx[2].pos.y = PlayerSelect[nCnt].pos.y + cosf(PlayerSelect[nCnt].rot.z - PlayerSelect[nCnt].fAngle) * PlayerSelect[nCnt].fLength;
+		pVtx[2].pos.z = 0.0f;
+
+		pVtx[3].pos.x = PlayerSelect[nCnt].pos.x + sinf(PlayerSelect[nCnt].rot.z + PlayerSelect[nCnt].fAngle) * PlayerSelect[nCnt].fLength;
+		pVtx[3].pos.y = PlayerSelect[nCnt].pos.y + cosf(PlayerSelect[nCnt].rot.z + PlayerSelect[nCnt].fAngle) * PlayerSelect[nCnt].fLength;
+		pVtx[3].pos.z = 0.0f;
+
+		//rhwの設定
+		pVtx[0].rhw = 1.0f;
+		pVtx[1].rhw = 1.0f;
+		pVtx[2].rhw = 1.0f;
+		pVtx[3].rhw = 1.0f;
+
+		//頂点カラーの設定
+		pVtx[0].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+		pVtx[1].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+		pVtx[2].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+		pVtx[3].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+
+
+		//テクスチャ座標の設定
+		pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
+		pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
+		pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
+		pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+
+		pVtx += 4;
+	}
+	
+	//頂点バッファのアンロック
+	g_pVtxBuffPlayerCount->Unlock();
+	nSelectPlayerCnt = 0;
+	nZoomSelectPCnt = 0;
+	bSelectPlayerAnim = false;
+	AnimFinish = false;
+}
+//===============================================================================
+//人数選択画面の終了処理
+//===============================================================================
+void UninitPlayerCount(void)
+{
+	for (int nCnt = 0; nCnt < SELECT_TEXCOUNT; nCnt++)
+	{
+		//テクスチャの破棄
+		if (g_pTexturePlayerCount[nCnt] != NULL)
+		{
+			g_pTexturePlayerCount[nCnt]->Release();
+			g_pTexturePlayerCount[nCnt] = NULL;
+		}
+	}
+	//頂点バッファの破棄
+	if (g_pVtxBuffPlayerCount != NULL)
+	{
+		g_pVtxBuffPlayerCount->Release();
+		g_pVtxBuffPlayerCount = NULL;
+	}
+}
+
+//===============================================================================
+//人数選択画面の更新処理
+//===============================================================================
+void UpdatePlayerCount(void)
+{
+	bool bSelPCnt = ReturnNowSelect();
+	if (bSelPCnt == true)
+	{
+		//動かしたら切り替わるよ
+		if (GetJoypadTrigger(JOYPAD_DPAD_UP) == true)//上押したとき
+		{
+			if (nSelectPlayerCnt == 0)
+			{
+				nSelectPlayerCnt = 3;//下行きます
+			}
+			else
+			{
+				nSelectPlayerCnt--;
+			}
+			nZoomSelectPCnt = 0;
+
+		}
+		if (GetJoypadTrigger(JOYPAD_DPAD_DOWN) == true)//下押したとき
+		{
+			if (nSelectPlayerCnt == 3)
+			{
+				nSelectPlayerCnt = 0;//上行きます
+			}
+			else
+			{
+				nSelectPlayerCnt++;
+			}
+			nZoomSelectPCnt = 0;
+
+		}
+		//どれが選択されてるか
+		switch (nSelectPlayerCnt)
+		{
+		case 0:
+			PlayerSelect[TEXTYPE_PLAYER1_ON].Type = TEXTYPE_PLAYER1_ON;
+			PlayerSelect[TEXTYPE_PLAYER2_ON].Type = TEXTYPE_PLAYER2_OFF;
+			PlayerSelect[TEXTYPE_PLAYER3_ON].Type = TEXTYPE_PLAYER3_OFF;
+			PlayerSelect[TEXTYPE_PLAYER4_ON].Type = TEXTYPE_PLAYER4_OFF;
+			break;
+		case 1:
+			PlayerSelect[TEXTYPE_PLAYER1_ON].Type = TEXTYPE_PLAYER1_OFF;
+			PlayerSelect[TEXTYPE_PLAYER2_ON].Type = TEXTYPE_PLAYER2_ON;
+			PlayerSelect[TEXTYPE_PLAYER3_ON].Type = TEXTYPE_PLAYER3_OFF;
+			PlayerSelect[TEXTYPE_PLAYER4_ON].Type = TEXTYPE_PLAYER4_OFF;
+			break;
+		case 2:
+			PlayerSelect[TEXTYPE_PLAYER1_ON].Type = TEXTYPE_PLAYER1_OFF;
+			PlayerSelect[TEXTYPE_PLAYER2_ON].Type = TEXTYPE_PLAYER2_OFF;
+			PlayerSelect[TEXTYPE_PLAYER3_ON].Type = TEXTYPE_PLAYER3_ON;
+			PlayerSelect[TEXTYPE_PLAYER4_ON].Type = TEXTYPE_PLAYER4_OFF;
+			break;
+		case 3:
+			PlayerSelect[TEXTYPE_PLAYER1_ON].Type = TEXTYPE_PLAYER1_OFF;
+			PlayerSelect[TEXTYPE_PLAYER2_ON].Type = TEXTYPE_PLAYER2_OFF;
+			PlayerSelect[TEXTYPE_PLAYER3_ON].Type = TEXTYPE_PLAYER3_OFF;
+			PlayerSelect[TEXTYPE_PLAYER4_ON].Type = TEXTYPE_PLAYER4_ON;
+			break;
+		}
+
+		//ズームイン・アウトの処理
+		if (nZoomSelectPCnt < 12)
+		{
+			nZoomSelectPCnt += 1.2f;
+		}
+
+		//動かす部分のアニメーション
+		if (bSelectPlayerAnim == false)
+		{
+			if (PlayerSelect[0].pos.y < 360.0f)
+			{
+				PlayerSelect[0].pos.y += 18.0f;
+				PlayerSelect[1].rot.z -= 0.2f;
+				PlayerSelect[2].rot.z += 0.2f;
+			}
+			if (PlayerSelect[0].pos.y >= 360.0f)
+			{
+				AnimFinish = true;
+			}
+		}
+		else
+		{
+			if (PlayerSelect[0].pos.y > -360.0f)
+			{
+				PlayerSelect[0].pos.y -= 18.0f;
+				PlayerSelect[1].rot.z += 0.2f;
+				PlayerSelect[2].rot.z -= 0.2f;
+			}
+			else if (PlayerSelect[0].pos.y <= -360.0f)
+			{
+				SwitchSelectMode();
+
+			}
+
+		}
+		//画面上での人数表示の相対値設定
+		PlayerSelect[3].pos.y = PlayerSelect[0].pos.y - 110.0f;
+		PlayerSelect[4].pos.y = PlayerSelect[0].pos.y - 30.0f;
+		PlayerSelect[5].pos.y = PlayerSelect[0].pos.y + 55.0f;
+		PlayerSelect[6].pos.y = PlayerSelect[0].pos.y + 140.0f;
+
+		VERTEX_2D* pVtx;	//頂点情報のポインタ
+
+		//頂点バッファをロックして、頂点情報へのポインタを取得
+		g_pVtxBuffPlayerCount->Lock(0, 0, (void**)&pVtx, 0);
+
+		for (int nCnt = 0; nCnt < SELECT_USE_POLY; nCnt++)
+		{
+			if (nCnt > 2)
+			{
+				if (PlayerSelect[nCnt].Type == nCnt)
+				{
+					//頂点座標の設定
+					pVtx[0].pos.x = PlayerSelect[nCnt].pos.x + sinf(PlayerSelect[nCnt].rot.z - (D3DX_PI - PlayerSelect[nCnt].fAngle)) * PlayerSelect[nCnt].fLength - nZoomSelectPCnt;
+					pVtx[0].pos.y = PlayerSelect[nCnt].pos.y + cosf(PlayerSelect[nCnt].rot.z - (D3DX_PI - PlayerSelect[nCnt].fAngle)) * PlayerSelect[nCnt].fLength - nZoomSelectPCnt;
+					pVtx[0].pos.z = 0.0f;
+					pVtx[1].pos.x = PlayerSelect[nCnt].pos.x + sinf(PlayerSelect[nCnt].rot.z + (D3DX_PI - PlayerSelect[nCnt].fAngle)) * PlayerSelect[nCnt].fLength + nZoomSelectPCnt;
+					pVtx[1].pos.y = PlayerSelect[nCnt].pos.y + cosf(PlayerSelect[nCnt].rot.z + (D3DX_PI - PlayerSelect[nCnt].fAngle)) * PlayerSelect[nCnt].fLength - nZoomSelectPCnt;
+					pVtx[1].pos.z = 0.0f;
+					pVtx[2].pos.x = PlayerSelect[nCnt].pos.x + sinf(PlayerSelect[nCnt].rot.z - PlayerSelect[nCnt].fAngle) * PlayerSelect[nCnt].fLength - nZoomSelectPCnt;
+					pVtx[2].pos.y = PlayerSelect[nCnt].pos.y + cosf(PlayerSelect[nCnt].rot.z - PlayerSelect[nCnt].fAngle) * PlayerSelect[nCnt].fLength + nZoomSelectPCnt;
+					pVtx[2].pos.z = 0.0f;
+					pVtx[3].pos.x = PlayerSelect[nCnt].pos.x + sinf(PlayerSelect[nCnt].rot.z + PlayerSelect[nCnt].fAngle) * PlayerSelect[nCnt].fLength + nZoomSelectPCnt;
+					pVtx[3].pos.y = PlayerSelect[nCnt].pos.y + cosf(PlayerSelect[nCnt].rot.z + PlayerSelect[nCnt].fAngle) * PlayerSelect[nCnt].fLength + nZoomSelectPCnt;
+					pVtx[3].pos.z = 0.0f;
+				}
+				else
+				{
+					//頂点座標の設定
+					pVtx[0].pos.x = PlayerSelect[nCnt].pos.x + sinf(PlayerSelect[nCnt].rot.z - (D3DX_PI - PlayerSelect[nCnt].fAngle)) * PlayerSelect[nCnt].fLength;
+					pVtx[0].pos.y = PlayerSelect[nCnt].pos.y + cosf(PlayerSelect[nCnt].rot.z - (D3DX_PI - PlayerSelect[nCnt].fAngle)) * PlayerSelect[nCnt].fLength;
+					pVtx[0].pos.z = 0.0f;
+					pVtx[1].pos.x = PlayerSelect[nCnt].pos.x + sinf(PlayerSelect[nCnt].rot.z + (D3DX_PI - PlayerSelect[nCnt].fAngle)) * PlayerSelect[nCnt].fLength;
+					pVtx[1].pos.y = PlayerSelect[nCnt].pos.y + cosf(PlayerSelect[nCnt].rot.z + (D3DX_PI - PlayerSelect[nCnt].fAngle)) * PlayerSelect[nCnt].fLength;
+					pVtx[1].pos.z = 0.0f;
+					pVtx[2].pos.x = PlayerSelect[nCnt].pos.x + sinf(PlayerSelect[nCnt].rot.z - PlayerSelect[nCnt].fAngle) * PlayerSelect[nCnt].fLength;
+					pVtx[2].pos.y = PlayerSelect[nCnt].pos.y + cosf(PlayerSelect[nCnt].rot.z - PlayerSelect[nCnt].fAngle) * PlayerSelect[nCnt].fLength;
+					pVtx[2].pos.z = 0.0f;
+					pVtx[3].pos.x = PlayerSelect[nCnt].pos.x + sinf(PlayerSelect[nCnt].rot.z + PlayerSelect[nCnt].fAngle) * PlayerSelect[nCnt].fLength;
+					pVtx[3].pos.y = PlayerSelect[nCnt].pos.y + cosf(PlayerSelect[nCnt].rot.z + PlayerSelect[nCnt].fAngle) * PlayerSelect[nCnt].fLength;
+					pVtx[3].pos.z = 0.0f;
+				}
+			}
+			else
+			{
+			
+				//頂点座標の設定
+				pVtx[0].pos.x = PlayerSelect[nCnt].pos.x + sinf(PlayerSelect[nCnt].rot.z - (D3DX_PI - PlayerSelect[nCnt].fAngle)) * PlayerSelect[nCnt].fLength;
+				pVtx[0].pos.y = PlayerSelect[nCnt].pos.y + cosf(PlayerSelect[nCnt].rot.z - (D3DX_PI - PlayerSelect[nCnt].fAngle)) * PlayerSelect[nCnt].fLength;
+				pVtx[0].pos.z = 0.0f;
+				pVtx[1].pos.x = PlayerSelect[nCnt].pos.x + sinf(PlayerSelect[nCnt].rot.z + (D3DX_PI - PlayerSelect[nCnt].fAngle)) * PlayerSelect[nCnt].fLength;
+				pVtx[1].pos.y = PlayerSelect[nCnt].pos.y + cosf(PlayerSelect[nCnt].rot.z + (D3DX_PI - PlayerSelect[nCnt].fAngle)) * PlayerSelect[nCnt].fLength;
+				pVtx[1].pos.z = 0.0f;
+				pVtx[2].pos.x = PlayerSelect[nCnt].pos.x + sinf(PlayerSelect[nCnt].rot.z - PlayerSelect[nCnt].fAngle) * PlayerSelect[nCnt].fLength;
+				pVtx[2].pos.y = PlayerSelect[nCnt].pos.y + cosf(PlayerSelect[nCnt].rot.z - PlayerSelect[nCnt].fAngle) * PlayerSelect[nCnt].fLength;
+				pVtx[2].pos.z = 0.0f;
+				pVtx[3].pos.x = PlayerSelect[nCnt].pos.x + sinf(PlayerSelect[nCnt].rot.z + PlayerSelect[nCnt].fAngle) * PlayerSelect[nCnt].fLength;
+				pVtx[3].pos.y = PlayerSelect[nCnt].pos.y + cosf(PlayerSelect[nCnt].rot.z + PlayerSelect[nCnt].fAngle) * PlayerSelect[nCnt].fLength;
+				pVtx[3].pos.z = 0.0f;
+				
+			}
+
+			//rhwの設定
+			pVtx[0].rhw = 1.0f;
+			pVtx[1].rhw = 1.0f;
+			pVtx[2].rhw = 1.0f;
+			pVtx[3].rhw = 1.0f;
+
+			//頂点カラーの設定
+			pVtx[0].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+			pVtx[1].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+			pVtx[2].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+			pVtx[3].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+
+			//テクスチャ座標の設定
+			pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
+			pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
+			pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
+			pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+
+			pVtx += 4;
+		}
+
+	}
+	//頂点バッファのアンロック
+	g_pVtxBuffPlayerCount->Unlock();
+	if (GetJoypadTrigger(JOYPAD_A) == true && AnimFinish == true)//決定！
+	{
+		int Mode = ReturnSelectedMode();
+		SetMode((MODE)Mode);
+	}
+	if (GetJoypadTrigger(JOYPAD_B) == true && AnimFinish == true)//嘘！
+	{
+		bSelectPlayerAnim = true;
+		AnimFinish = false;
+
+	}
+
+}
+//===============================================================================
+//人数選択画面系の描画
+//===============================================================================
+void DrawPlayerCount(void)
+{
+	LPDIRECT3DDEVICE9 pDevice;
+	//デバイスの取得
+	pDevice = GetDevice();
+	//頂点バッファをデータストリームに設定
+	pDevice->SetStreamSource(0, g_pVtxBuffPlayerCount, 0, sizeof(VERTEX_2D));
+	//頂点フォーマットの設定
+	pDevice->SetFVF(FVF_VERTEX_2D);
+	//テクスチャの設定
+	for (int nCnt = 0; nCnt < SELECT_USE_POLY; nCnt++)
+	{
+		pDevice->SetTexture(0, g_pTexturePlayerCount[PlayerSelect[nCnt].Type]);
+		//ポリゴンの描画
+		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP,
+			4 * nCnt,
+			2);
+	}
+}
+//===============================================================================
+//選択されている人数を返す関数
+//===============================================================================
+int ReturnSelectPlayerCount(void)
+{
+	return nSelectPlayerCnt;		//これを int i = ReturnSelectPlayerCount()するだけで人数取得できます(0～3)
+}
+//===============================================================================
+//アニメーションが終わったことを返す関数
+//===============================================================================
+bool ReturnAnimFinish(void)
+{
+	return AnimFinish;
+}
+//===============================================================================
+//別のcppからアニメーションを作動させる関数
+//===============================================================================
+void AnimSwitch(void)
+{
+	bSelectPlayerAnim = false;
+}
+
