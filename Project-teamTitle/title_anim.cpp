@@ -240,8 +240,8 @@ void UpdateTitleAnim(void)
 	
 	if (TitleAnim[8].rot.z < 3.14f*1.5f)
 	{
-		TitleAnim[8].rot.z  += (3.14f * 0.018f);
-		TitleAnim[10].rot.z -= (3.14f * 0.018f);
+		TitleAnim[8].rot.z  += (3.14f * 0.015f);
+		TitleAnim[10].rot.z -= (3.14f * 0.015f);
 
 	}
 	else
