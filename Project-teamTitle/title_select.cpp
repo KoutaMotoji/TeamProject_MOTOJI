@@ -348,23 +348,6 @@ void UpdateTitleSelect(void)
 				pVtx[3].pos.y = TitleInfo[nCnt].pos.y + cosf(TitleInfo[nCnt].rot.z + TitleInfo[nCnt].fAngle) * TitleInfo[nCnt].fLength;
 				pVtx[3].pos.z = 0.0f;
 			}
-			//rhwの設定
-			pVtx[0].rhw = 1.0f;
-			pVtx[1].rhw = 1.0f;
-			pVtx[2].rhw = 1.0f;
-			pVtx[3].rhw = 1.0f;
-
-			//頂点カラーの設定
-			pVtx[0].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-			pVtx[1].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-			pVtx[2].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-			pVtx[3].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-
-			//テクスチャ座標の設定
-			pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
-			pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
-			pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
-			pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
 
 			pVtx += 4;
 		}

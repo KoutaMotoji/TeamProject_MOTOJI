@@ -1,6 +1,6 @@
 //===============================================================================
 //
-//  3Dチーム制作(title_select.cpp)
+//  3Dチーム制作(player_count.cpp)
 //								制作：元地弘汰
 // 
 //===============================================================================
@@ -342,12 +342,15 @@ void UpdatePlayerCount(void)
 					pVtx[0].pos.x = PlayerSelect[nCnt].pos.x + sinf(PlayerSelect[nCnt].rot.z - (D3DX_PI - PlayerSelect[nCnt].fAngle)) * PlayerSelect[nCnt].fLength - nZoomSelectPCnt;
 					pVtx[0].pos.y = PlayerSelect[nCnt].pos.y + cosf(PlayerSelect[nCnt].rot.z - (D3DX_PI - PlayerSelect[nCnt].fAngle)) * PlayerSelect[nCnt].fLength - nZoomSelectPCnt;
 					pVtx[0].pos.z = 0.0f;
+
 					pVtx[1].pos.x = PlayerSelect[nCnt].pos.x + sinf(PlayerSelect[nCnt].rot.z + (D3DX_PI - PlayerSelect[nCnt].fAngle)) * PlayerSelect[nCnt].fLength + nZoomSelectPCnt;
 					pVtx[1].pos.y = PlayerSelect[nCnt].pos.y + cosf(PlayerSelect[nCnt].rot.z + (D3DX_PI - PlayerSelect[nCnt].fAngle)) * PlayerSelect[nCnt].fLength - nZoomSelectPCnt;
 					pVtx[1].pos.z = 0.0f;
+
 					pVtx[2].pos.x = PlayerSelect[nCnt].pos.x + sinf(PlayerSelect[nCnt].rot.z - PlayerSelect[nCnt].fAngle) * PlayerSelect[nCnt].fLength - nZoomSelectPCnt;
 					pVtx[2].pos.y = PlayerSelect[nCnt].pos.y + cosf(PlayerSelect[nCnt].rot.z - PlayerSelect[nCnt].fAngle) * PlayerSelect[nCnt].fLength + nZoomSelectPCnt;
 					pVtx[2].pos.z = 0.0f;
+
 					pVtx[3].pos.x = PlayerSelect[nCnt].pos.x + sinf(PlayerSelect[nCnt].rot.z + PlayerSelect[nCnt].fAngle) * PlayerSelect[nCnt].fLength + nZoomSelectPCnt;
 					pVtx[3].pos.y = PlayerSelect[nCnt].pos.y + cosf(PlayerSelect[nCnt].rot.z + PlayerSelect[nCnt].fAngle) * PlayerSelect[nCnt].fLength + nZoomSelectPCnt;
 					pVtx[3].pos.z = 0.0f;
@@ -358,12 +361,15 @@ void UpdatePlayerCount(void)
 					pVtx[0].pos.x = PlayerSelect[nCnt].pos.x + sinf(PlayerSelect[nCnt].rot.z - (D3DX_PI - PlayerSelect[nCnt].fAngle)) * PlayerSelect[nCnt].fLength;
 					pVtx[0].pos.y = PlayerSelect[nCnt].pos.y + cosf(PlayerSelect[nCnt].rot.z - (D3DX_PI - PlayerSelect[nCnt].fAngle)) * PlayerSelect[nCnt].fLength;
 					pVtx[0].pos.z = 0.0f;
+
 					pVtx[1].pos.x = PlayerSelect[nCnt].pos.x + sinf(PlayerSelect[nCnt].rot.z + (D3DX_PI - PlayerSelect[nCnt].fAngle)) * PlayerSelect[nCnt].fLength;
 					pVtx[1].pos.y = PlayerSelect[nCnt].pos.y + cosf(PlayerSelect[nCnt].rot.z + (D3DX_PI - PlayerSelect[nCnt].fAngle)) * PlayerSelect[nCnt].fLength;
 					pVtx[1].pos.z = 0.0f;
+
 					pVtx[2].pos.x = PlayerSelect[nCnt].pos.x + sinf(PlayerSelect[nCnt].rot.z - PlayerSelect[nCnt].fAngle) * PlayerSelect[nCnt].fLength;
 					pVtx[2].pos.y = PlayerSelect[nCnt].pos.y + cosf(PlayerSelect[nCnt].rot.z - PlayerSelect[nCnt].fAngle) * PlayerSelect[nCnt].fLength;
 					pVtx[2].pos.z = 0.0f;
+
 					pVtx[3].pos.x = PlayerSelect[nCnt].pos.x + sinf(PlayerSelect[nCnt].rot.z + PlayerSelect[nCnt].fAngle) * PlayerSelect[nCnt].fLength;
 					pVtx[3].pos.y = PlayerSelect[nCnt].pos.y + cosf(PlayerSelect[nCnt].rot.z + PlayerSelect[nCnt].fAngle) * PlayerSelect[nCnt].fLength;
 					pVtx[3].pos.z = 0.0f;
@@ -376,35 +382,20 @@ void UpdatePlayerCount(void)
 				pVtx[0].pos.x = PlayerSelect[nCnt].pos.x + sinf(PlayerSelect[nCnt].rot.z - (D3DX_PI - PlayerSelect[nCnt].fAngle)) * PlayerSelect[nCnt].fLength;
 				pVtx[0].pos.y = PlayerSelect[nCnt].pos.y + cosf(PlayerSelect[nCnt].rot.z - (D3DX_PI - PlayerSelect[nCnt].fAngle)) * PlayerSelect[nCnt].fLength;
 				pVtx[0].pos.z = 0.0f;
+
 				pVtx[1].pos.x = PlayerSelect[nCnt].pos.x + sinf(PlayerSelect[nCnt].rot.z + (D3DX_PI - PlayerSelect[nCnt].fAngle)) * PlayerSelect[nCnt].fLength;
 				pVtx[1].pos.y = PlayerSelect[nCnt].pos.y + cosf(PlayerSelect[nCnt].rot.z + (D3DX_PI - PlayerSelect[nCnt].fAngle)) * PlayerSelect[nCnt].fLength;
 				pVtx[1].pos.z = 0.0f;
+
 				pVtx[2].pos.x = PlayerSelect[nCnt].pos.x + sinf(PlayerSelect[nCnt].rot.z - PlayerSelect[nCnt].fAngle) * PlayerSelect[nCnt].fLength;
 				pVtx[2].pos.y = PlayerSelect[nCnt].pos.y + cosf(PlayerSelect[nCnt].rot.z - PlayerSelect[nCnt].fAngle) * PlayerSelect[nCnt].fLength;
 				pVtx[2].pos.z = 0.0f;
+
 				pVtx[3].pos.x = PlayerSelect[nCnt].pos.x + sinf(PlayerSelect[nCnt].rot.z + PlayerSelect[nCnt].fAngle) * PlayerSelect[nCnt].fLength;
 				pVtx[3].pos.y = PlayerSelect[nCnt].pos.y + cosf(PlayerSelect[nCnt].rot.z + PlayerSelect[nCnt].fAngle) * PlayerSelect[nCnt].fLength;
 				pVtx[3].pos.z = 0.0f;
 				
 			}
-
-			//rhwの設定
-			pVtx[0].rhw = 1.0f;
-			pVtx[1].rhw = 1.0f;
-			pVtx[2].rhw = 1.0f;
-			pVtx[3].rhw = 1.0f;
-
-			//頂点カラーの設定
-			pVtx[0].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-			pVtx[1].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-			pVtx[2].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-			pVtx[3].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-
-			//テクスチャ座標の設定
-			pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
-			pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
-			pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
-			pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
 
 			pVtx += 4;
 		}

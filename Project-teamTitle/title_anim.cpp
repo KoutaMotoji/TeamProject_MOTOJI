@@ -298,18 +298,6 @@ void UpdateTitleAnim(void)
 		pVtx[3].pos.y = TitleAnim[nCnt].pos.y + cosf(TitleAnim[nCnt].rot.z + TitleAnim[nCnt].fAngle) * TitleAnim[nCnt].fLength;
 		pVtx[3].pos.z = 0.0f;
 
-		//rhwの設定
-		pVtx[0].rhw = 1.0f;
-		pVtx[1].rhw = 1.0f;
-		pVtx[2].rhw = 1.0f;
-		pVtx[3].rhw = 1.0f;
-
-		//頂点カラーの設定
-		pVtx[0].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-		pVtx[1].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-		pVtx[2].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-		pVtx[3].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-
 		if (nCnt == 6 || nCnt == 7)
 		{
 			//テクスチャ座標の設定
