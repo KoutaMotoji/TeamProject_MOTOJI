@@ -117,7 +117,7 @@ void InitTitleSelect(void)
 			TitleInfo[i].fAngle = atan2f(SCREEN_WIDTH, SCREEN_HEIGHT);
 			TitleInfo[i].fLength = sqrtf(SCREEN_WIDTH * SCREEN_WIDTH + SCREEN_HEIGHT * SCREEN_HEIGHT) / 2.0f;
 			TitleInfo[i].Type = 8;
-			TitleInfo[i].pos = D3DXVECTOR3((SCREEN_WIDTH*1.5f), (SCREEN_HEIGHT / 2), 0);
+			TitleInfo[i].pos = D3DXVECTOR3((SCREEN_WIDTH*1.25f), (SCREEN_HEIGHT / 2), 0);
 		}
 	}
 	VERTEX_2D* pVtx;	//頂点情報のポインタ
@@ -209,11 +209,11 @@ void UpdateTitleSelect(void)
 		{
 			if (bSelectFinish == false)
 			{
-				if (TitleInfo[4].pos.x < (SCREEN_WIDTH*1.5))
+				if (TitleInfo[4].pos.x < (SCREEN_WIDTH*1.25))
 				{
 					TitleInfo[4].pos.x += SCREEN_WIDTH * 0.025f;
 				}
-				if (GetJoypadTrigger(JOYPAD_DPAD_UP) == true)
+				if (GetJoypadTrigger(JOYKEY_UP,0) == true)
 				{
 					if (nSelectTitle == SELECTED_START)
 					{
@@ -225,7 +225,7 @@ void UpdateTitleSelect(void)
 					}
 					nZoomTitle = 0;
 				}
-				else if (GetJoypadTrigger(JOYPAD_DPAD_DOWN) == true)
+				else if (GetJoypadTrigger(JOYKEY_DOWN,0) == true)
 				{
 					if (nSelectTitle == SELECTED_FINISH)
 					{
@@ -271,7 +271,7 @@ void UpdateTitleSelect(void)
 				{
 					TitleInfo[4].pos.x -= SCREEN_WIDTH * 0.025f;
 				}
-				if (GetJoypadTrigger(JOYPAD_DPAD_UP) == true || GetJoypadTrigger(JOYPAD_DPAD_DOWN) == true)
+				if (GetJoypadTrigger(JOYKEY_UP,0) == true || GetJoypadTrigger(JOYKEY_DOWN,0) == true)
 				{
 					if (nSelectFinish == 0)
 					{
@@ -290,7 +290,7 @@ void UpdateTitleSelect(void)
 				{
 					TitleInfo[4].Type = 9;
 				}
-				if (GetJoypadTrigger(JOYPAD_A) == true)
+				if (GetJoypadTrigger(JOYKEY_A,0) == true)
 				{
 					if (nSelectFinish == 0)
 					{
@@ -372,7 +372,7 @@ void UpdateTitleSelect(void)
 		//頂点バッファのアンロック
 		g_pVtxBuffTitleSelect->Unlock();
 		//モード決定
-		if (GetJoypadTrigger(JOYPAD_A) == true && bSelectMode == false)
+		if (GetJoypadTrigger(JOYKEY_A,0) == true && bSelectMode == false)
 		{
 			if (nSelectTitle == SELECTED_FINISH)
 			{//もし終了が選択されていたら

@@ -82,7 +82,7 @@ void UninitRanking(void)
 //ÉQÅ[ÉÄçXêV
 void UpdateRanking(void)
 {
-	if (GetJoypadTrigger(JOYPAD_A) == true || GetKeyboardTrigger(DIK_RETURN) == true)
+	if (GetJoypadTrigger(JOYKEY_A, 0) == true || GetKeyboardTrigger(DIK_RETURN) == true)
 	{
 		SetMode(MODE_RESULT);
 	}

@@ -253,7 +253,7 @@ void Uninit(void)
 	//// リザルト終了
 	UninitResult();
 	//キーボードの終了処理
-	UninitKeyboard();
+	UnInitKeyboard();
 
 	//ランキングの終了
 	UninitRanking();

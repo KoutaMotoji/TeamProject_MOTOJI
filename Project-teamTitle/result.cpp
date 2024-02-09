@@ -110,7 +110,7 @@ void UpdateResult(void)
 
 	//頂点バッファのアンロック
 	g_pVtxBuffResult->Unlock();
-	if (GetJoypadTrigger(JOYPAD_A) == true)
+	if (GetJoypadTrigger(JOYKEY_A,0) == true)
 	{
 		SetMode(MODE_TITLE);
 	}

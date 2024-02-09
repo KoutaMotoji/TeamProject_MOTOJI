@@ -94,7 +94,7 @@ void UninitTutorial(void)
 void UpdateTutorial(void)
 {
 	UpdateScore();
-	if (GetKeyboardTrigger(DIK_RETURN) == true||GetJoypadTrigger(JOYPAD_A) == true)
+	if (GetKeyboardTrigger(DIK_RETURN) == true||GetJoypadTrigger(JOYKEY_A, 0) == true)
 	{
 		//ÉÇÅ[ÉhÇÃêÿÇËë÷Ç¶
 		SetMode(MODE_TITLE);

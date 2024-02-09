@@ -232,7 +232,7 @@ void UpdatePlayerCount(void)
 	if (bSelPCnt == true)
 	{
 		//動かしたら切り替わるよ
-		if (GetJoypadTrigger(JOYPAD_DPAD_UP) == true)//上押したとき
+		if (GetJoypadTrigger(JOYKEY_UP,0) == true)//上押したとき
 		{
 			if (nSelectPlayerCnt == SELECTTYPE_START)
 			{//もし一番上なら
@@ -245,7 +245,7 @@ void UpdatePlayerCount(void)
 			nZoomSelectPCnt = 0;
 
 		}
-		if (GetJoypadTrigger(JOYPAD_DPAD_DOWN) == true)//下押したとき
+		if (GetJoypadTrigger(JOYKEY_DOWN,0) == true)//下押したとき
 		{
 			if (nSelectPlayerCnt == SELECTTYPE_FINISH)
 			{//もし一番下なら
@@ -298,9 +298,9 @@ void UpdatePlayerCount(void)
 		{//選択肢降りてくる
 			if (PlayerSelect[0].pos.y < 360.0f)
 			{
-				PlayerSelect[0].pos.y += 18.0f;
-				PlayerSelect[1].rot.z -= 0.2f;
-				PlayerSelect[2].rot.z += 0.2f;
+				PlayerSelect[0].pos.y += 24.0f;
+				PlayerSelect[1].rot.z -= 0.3f;
+				PlayerSelect[2].rot.z += 0.3f;
 			}
 			if (PlayerSelect[0].pos.y >= 360.0f)
 			{
@@ -311,9 +311,9 @@ void UpdatePlayerCount(void)
 		{
 			if (PlayerSelect[0].pos.y > -360.0f)
 			{
-				PlayerSelect[0].pos.y -= 18.0f;
-				PlayerSelect[1].rot.z += 0.2f;
-				PlayerSelect[2].rot.z -= 0.2f;
+				PlayerSelect[0].pos.y -= 24.0f;
+				PlayerSelect[1].rot.z += 0.3f;
+				PlayerSelect[2].rot.z -= 0.3f;
 			}
 			else if (PlayerSelect[0].pos.y <= -360.0f)
 			{
@@ -412,12 +412,12 @@ void UpdatePlayerCount(void)
 	}
 	//頂点バッファのアンロック
 	g_pVtxBuffPlayerCount->Unlock();
-	if (GetJoypadTrigger(JOYPAD_A) == true && AnimFinish == true)//決定！
+	if (GetJoypadTrigger(JOYKEY_A,0) == true && AnimFinish == true)//決定！
 	{
 		int Mode = ReturnSelectedMode();
 		SetMode((MODE)Mode);
 	}
-	if (GetJoypadTrigger(JOYPAD_B) == true && AnimFinish == true)//嘘！
+	if (GetJoypadTrigger(JOYKEY_B,0) == true && AnimFinish == true)//嘘！
 	{
 		bSelectPlayerAnim = true;
 		AnimFinish = false;
