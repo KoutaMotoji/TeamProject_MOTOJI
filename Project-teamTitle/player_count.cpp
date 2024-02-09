@@ -149,7 +149,6 @@ void InitPlayerCount(void)
 
 	for (int nCnt = 0; nCnt < SELECT_USE_POLY; nCnt++)
 	{
-
 		//頂点座標の設定
 		pVtx[0].pos.x = PlayerSelect[nCnt].pos.x + sinf(PlayerSelect[nCnt].rot.z - (D3DX_PI - PlayerSelect[nCnt].fAngle)) * PlayerSelect[nCnt].fLength;
 		pVtx[0].pos.y = PlayerSelect[nCnt].pos.y + cosf(PlayerSelect[nCnt].rot.z - (D3DX_PI - PlayerSelect[nCnt].fAngle)) * PlayerSelect[nCnt].fLength;
@@ -178,7 +177,6 @@ void InitPlayerCount(void)
 		pVtx[1].col = D3DCOLOR_RGBA(255, 255, 255, 255);
 		pVtx[2].col = D3DCOLOR_RGBA(255, 255, 255, 255);
 		pVtx[3].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-
 
 		//テクスチャ座標の設定
 		pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
@@ -223,15 +221,22 @@ void UninitPlayerCount(void)
 //===============================================================================
 void UpdatePlayerCount(void)
 {
+	enum
+	{
+		SELECTTYPE_START = 0,
+		SELECTTYPE_TUTORIAL,
+		SELECTTYPE_RANKING,
+		SELECTTYPE_FINISH
+	};
 	bool bSelPCnt = ReturnNowSelect();
 	if (bSelPCnt == true)
 	{
 		//動かしたら切り替わるよ
 		if (GetJoypadTrigger(JOYPAD_DPAD_UP) == true)//上押したとき
 		{
-			if (nSelectPlayerCnt == 0)
-			{
-				nSelectPlayerCnt = 3;//下行きます
+			if (nSelectPlayerCnt == SELECTTYPE_START)
+			{//もし一番上なら
+				nSelectPlayerCnt = SELECTTYPE_FINISH;//下行きます
 			}
 			else
 			{
@@ -242,9 +247,9 @@ void UpdatePlayerCount(void)
 		}
 		if (GetJoypadTrigger(JOYPAD_DPAD_DOWN) == true)//下押したとき
 		{
-			if (nSelectPlayerCnt == 3)
-			{
-				nSelectPlayerCnt = 0;//上行きます
+			if (nSelectPlayerCnt == SELECTTYPE_FINISH)
+			{//もし一番下なら
+				nSelectPlayerCnt = SELECTTYPE_START;//上行きます
 			}
 			else
 			{
@@ -256,25 +261,25 @@ void UpdatePlayerCount(void)
 		//どれが選択されてるか
 		switch (nSelectPlayerCnt)
 		{
-		case 0:
+		case SELECTTYPE_START:
 			PlayerSelect[TEXTYPE_PLAYER1_ON].Type = TEXTYPE_PLAYER1_ON;
 			PlayerSelect[TEXTYPE_PLAYER2_ON].Type = TEXTYPE_PLAYER2_OFF;
 			PlayerSelect[TEXTYPE_PLAYER3_ON].Type = TEXTYPE_PLAYER3_OFF;
 			PlayerSelect[TEXTYPE_PLAYER4_ON].Type = TEXTYPE_PLAYER4_OFF;
 			break;
-		case 1:
+		case SELECTTYPE_TUTORIAL:
 			PlayerSelect[TEXTYPE_PLAYER1_ON].Type = TEXTYPE_PLAYER1_OFF;
 			PlayerSelect[TEXTYPE_PLAYER2_ON].Type = TEXTYPE_PLAYER2_ON;
 			PlayerSelect[TEXTYPE_PLAYER3_ON].Type = TEXTYPE_PLAYER3_OFF;
 			PlayerSelect[TEXTYPE_PLAYER4_ON].Type = TEXTYPE_PLAYER4_OFF;
 			break;
-		case 2:
+		case SELECTTYPE_RANKING:
 			PlayerSelect[TEXTYPE_PLAYER1_ON].Type = TEXTYPE_PLAYER1_OFF;
 			PlayerSelect[TEXTYPE_PLAYER2_ON].Type = TEXTYPE_PLAYER2_OFF;
 			PlayerSelect[TEXTYPE_PLAYER3_ON].Type = TEXTYPE_PLAYER3_ON;
 			PlayerSelect[TEXTYPE_PLAYER4_ON].Type = TEXTYPE_PLAYER4_OFF;
 			break;
-		case 3:
+		case SELECTTYPE_FINISH:
 			PlayerSelect[TEXTYPE_PLAYER1_ON].Type = TEXTYPE_PLAYER1_OFF;
 			PlayerSelect[TEXTYPE_PLAYER2_ON].Type = TEXTYPE_PLAYER2_OFF;
 			PlayerSelect[TEXTYPE_PLAYER3_ON].Type = TEXTYPE_PLAYER3_OFF;
@@ -290,7 +295,7 @@ void UpdatePlayerCount(void)
 
 		//動かす部分のアニメーション
 		if (bSelectPlayerAnim == false)
-		{
+		{//選択肢降りてくる
 			if (PlayerSelect[0].pos.y < 360.0f)
 			{
 				PlayerSelect[0].pos.y += 18.0f;
@@ -301,7 +306,7 @@ void UpdatePlayerCount(void)
 			{
 				AnimFinish = true;
 			}
-		}
+		}//選択肢戻る
 		else
 		{
 			if (PlayerSelect[0].pos.y > -360.0f)
@@ -313,7 +318,6 @@ void UpdatePlayerCount(void)
 			else if (PlayerSelect[0].pos.y <= -360.0f)
 			{
 				SwitchSelectMode();
-
 			}
 
 		}

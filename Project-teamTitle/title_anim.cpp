@@ -9,7 +9,7 @@
 
 #define SELECT_USE_POLY	(11)
 #define TITLE_ANIM_POS_X	(SCREEN_WIDTH * 0.5)
-#define TITLE_ANIM_GEAR_HALFSIZE	(150)
+#define TITLE_ANIM_GEAR_HALFSIZE	(120)
 
 //テクスチャ割り当て(順は上に〃)
 typedef enum
