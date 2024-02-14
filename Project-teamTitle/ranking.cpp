@@ -34,9 +34,9 @@ void InitRanking(void)
 	//頂点バッファをロックして、頂点情報へのポインタを取得
 	g_pVtxBuffRanking->Lock(0, 0, (void**)&pVtx, 0);
 	pVtx[0].pos = D3DXVECTOR3(0, 0, 0.0f);
-	pVtx[1].pos = D3DXVECTOR3(1280, 0, 0.0f);
-	pVtx[2].pos = D3DXVECTOR3(0, 720, 0.0f);
-	pVtx[3].pos = D3DXVECTOR3(1280, 720, 0.0f);
+	pVtx[1].pos = D3DXVECTOR3(SCREEN_WIDTH, 0, 0.0f);
+	pVtx[2].pos = D3DXVECTOR3(0, SCREEN_HEIGHT, 0.0f);
+	pVtx[3].pos = D3DXVECTOR3(SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f);
 
 	//rhwの設定
 	pVtx[0].rhw = 1.0f;
@@ -103,5 +103,5 @@ void DrawRanking(void)
 	//ポリゴンの描画
 	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP,
 		0,
-		4);
+		2);
 }

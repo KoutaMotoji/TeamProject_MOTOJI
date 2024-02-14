@@ -10,7 +10,7 @@
 
 #define SELECT_TEXCOUNT	(11)		//テクスチャの数
 #define SELECT_USE_POLY	(7)
-#define SELECT_BASE_POS_X	(SCREEN_WIDTH * 0.5+ 200)
+#define SELECT_BASE_POS_X	(SCREEN_WIDTH * 0.5+ 320)
 
 //テクスチャ列挙
 static const char* PSelCnt[SELECT_TEXCOUNT]
@@ -64,6 +64,7 @@ int nSelectPlayerCnt;		//人数選択用変数
 float nZoomSelectPCnt;		//ズームイン・アウト用
 bool bSelectPlayerAnim;		//アニメーション判定用
 bool AnimFinish;			//アニメーション終了判定
+bool bSelPCnt;
 PLAYERSELECT PlayerSelect[SELECT_USE_POLY];			//プレイヤー選択構造体
 
 //===============================================================================
@@ -93,52 +94,52 @@ void InitPlayerCount(void)
 
 	for (int i = 0; i < SELECT_USE_POLY; i++)
 	{
-		PlayerSelect[i].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);//一応初期化
 		switch (i)
 		{
 		case TEXTYPE_BASE:		
-			PlayerSelect[i].pos = D3DXVECTOR3(SELECT_BASE_POS_X, -360, 0);
-			PlayerSelect[i].fWidth = 300;
-			PlayerSelect[i].fHeight = 720;
+			PlayerSelect[i].pos = D3DXVECTOR3(SELECT_BASE_POS_X, -(SCREEN_HEIGHT * 0.5f), 0);
+			PlayerSelect[i].fWidth  = 460;
+			PlayerSelect[i].fHeight = SCREEN_HEIGHT;
 			PlayerSelect[i].Type = i;
 			break;
 		case TEXTYPE_GEAR_L:
-			PlayerSelect[i].pos = D3DXVECTOR3(SELECT_BASE_POS_X - 160.0f, 0.0f, 0);
-			PlayerSelect[i].fWidth = 70;
-			PlayerSelect[i].fHeight = 70;
+			PlayerSelect[i].pos = D3DXVECTOR3(SELECT_BASE_POS_X - 250.0f, 0.0f, 0);
+			PlayerSelect[i].fWidth  = 120;
+			PlayerSelect[i].fHeight = 120;
 			PlayerSelect[i].Type = i;
 			break;
 		case TEXTYPE_GEAR_R:
-			PlayerSelect[i].pos = D3DXVECTOR3(SELECT_BASE_POS_X + 160.0f, 0.0f, 0);
-			PlayerSelect[i].fWidth = 70;
-			PlayerSelect[i].fHeight = 70;
+			PlayerSelect[i].pos = D3DXVECTOR3(SELECT_BASE_POS_X + 250.0f, 0.0f, 0);
+			PlayerSelect[i].fWidth  = 120;
+			PlayerSelect[i].fHeight = 120;
 			PlayerSelect[i].Type = i;
 			break;
 		case TEXTYPE_PLAYER1_ON:
 			PlayerSelect[i].pos = D3DXVECTOR3(SELECT_BASE_POS_X, -300, 0);
-			PlayerSelect[i].fWidth = 120;
-			PlayerSelect[i].fHeight = 50;
+			PlayerSelect[i].fWidth  = 180;
+			PlayerSelect[i].fHeight = 80;
 			PlayerSelect[i].Type = TEXTYPE_PLAYER1_ON;
 			break;
 		case TEXTYPE_PLAYER2_ON:
 			PlayerSelect[i].pos = D3DXVECTOR3(SELECT_BASE_POS_X, -300, 0);
-			PlayerSelect[i].fWidth = 120;
-			PlayerSelect[i].fHeight = 50;
+			PlayerSelect[i].fWidth  = 180;
+			PlayerSelect[i].fHeight = 80;
 			PlayerSelect[i].Type = TEXTYPE_PLAYER2_OFF;
 			break;
 		case TEXTYPE_PLAYER3_ON:
 			PlayerSelect[i].pos = D3DXVECTOR3(SELECT_BASE_POS_X, -300, 0);
-			PlayerSelect[i].fWidth = 120;
-			PlayerSelect[i].fHeight = 50;
+			PlayerSelect[i].fWidth  = 180;
+			PlayerSelect[i].fHeight = 80;
 			PlayerSelect[i].Type = TEXTYPE_PLAYER3_OFF;
 			break;
 		case TEXTYPE_PLAYER4_ON:
 			PlayerSelect[i].pos = D3DXVECTOR3(SELECT_BASE_POS_X, -300, 0);
-			PlayerSelect[i].fWidth = 120;
-			PlayerSelect[i].fHeight = 50;
+			PlayerSelect[i].fWidth  = 180;
+			PlayerSelect[i].fHeight = 80;
 			PlayerSelect[i].Type = TEXTYPE_PLAYER4_OFF;
 			break;
 		}
+		PlayerSelect[i].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);//一応初期化
 		PlayerSelect[i].fAngle = atan2f(PlayerSelect[i].fWidth, PlayerSelect[i].fHeight);
 		PlayerSelect[i].fLength = sqrtf(PlayerSelect[i].fWidth * PlayerSelect[i].fWidth + PlayerSelect[i].fHeight * PlayerSelect[i].fHeight) / 2;
 	}
@@ -193,6 +194,7 @@ void InitPlayerCount(void)
 	nZoomSelectPCnt = 0;
 	bSelectPlayerAnim = false;
 	AnimFinish = false;
+	bSelPCnt = false;
 }
 //===============================================================================
 //人数選択画面の終了処理
@@ -228,7 +230,7 @@ void UpdatePlayerCount(void)
 		SELECTTYPE_RANKING,
 		SELECTTYPE_FINISH
 	};
-	bool bSelPCnt = ReturnNowSelect();
+	bSelPCnt = ReturnNowSelect();
 	if (bSelPCnt == true)
 	{
 		//動かしたら切り替わるよ
@@ -296,36 +298,35 @@ void UpdatePlayerCount(void)
 		//動かす部分のアニメーション
 		if (bSelectPlayerAnim == false)
 		{//選択肢降りてくる
-			if (PlayerSelect[0].pos.y < 360.0f)
+			if (PlayerSelect[0].pos.y < SCREEN_HEIGHT * 0.5f)
 			{
-				PlayerSelect[0].pos.y += 24.0f;
+				PlayerSelect[0].pos.y += 48.0f;
 				PlayerSelect[1].rot.z -= 0.3f;
 				PlayerSelect[2].rot.z += 0.3f;
 			}
-			if (PlayerSelect[0].pos.y >= 360.0f)
+			if (PlayerSelect[0].pos.y >= SCREEN_HEIGHT * 0.5f)
 			{
 				AnimFinish = true;
 			}
 		}//選択肢戻る
 		else
 		{
-			if (PlayerSelect[0].pos.y > -360.0f)
+			if (PlayerSelect[0].pos.y > -SCREEN_HEIGHT * 0.5f)
 			{
-				PlayerSelect[0].pos.y -= 24.0f;
+				PlayerSelect[0].pos.y -= 48.0f;
 				PlayerSelect[1].rot.z += 0.3f;
 				PlayerSelect[2].rot.z -= 0.3f;
 			}
-			else if (PlayerSelect[0].pos.y <= -360.0f)
+			else if (PlayerSelect[0].pos.y <= -SCREEN_HEIGHT * 0.5f)
 			{
 				SwitchSelectMode();
 			}
-
 		}
 		//画面上での人数表示の相対値設定
-		PlayerSelect[3].pos.y = PlayerSelect[0].pos.y - 110.0f;
-		PlayerSelect[4].pos.y = PlayerSelect[0].pos.y - 30.0f;
-		PlayerSelect[5].pos.y = PlayerSelect[0].pos.y + 55.0f;
-		PlayerSelect[6].pos.y = PlayerSelect[0].pos.y + 140.0f;
+		PlayerSelect[3].pos.y = PlayerSelect[0].pos.y - 165.0f;
+		PlayerSelect[4].pos.y = PlayerSelect[0].pos.y - 40.0f;
+		PlayerSelect[5].pos.y = PlayerSelect[0].pos.y + 80.0f;
+		PlayerSelect[6].pos.y = PlayerSelect[0].pos.y + 210.0f;
 
 		VERTEX_2D* pVtx;	//頂点情報のポインタ
 
@@ -412,10 +413,10 @@ void UpdatePlayerCount(void)
 	{
 		bSelectPlayerAnim = true;
 		AnimFinish = false;
-
 	}
 
 }
+
 //===============================================================================
 //人数選択画面系の描画
 //===============================================================================
@@ -438,6 +439,7 @@ void DrawPlayerCount(void)
 			2);
 	}
 }
+
 //===============================================================================
 //選択されている人数を返す関数
 //===============================================================================
@@ -445,6 +447,7 @@ int ReturnSelectPlayerCount(void)
 {
 	return nSelectPlayerCnt;		//これを int i = ReturnSelectPlayerCount()するだけで人数取得できます(0～3)
 }
+
 //===============================================================================
 //アニメーションが終わったことを返す関数
 //===============================================================================
@@ -452,6 +455,7 @@ bool ReturnAnimFinish(void)
 {
 	return AnimFinish;
 }
+
 //===============================================================================
 //別のcppからアニメーションを作動させる関数
 //===============================================================================

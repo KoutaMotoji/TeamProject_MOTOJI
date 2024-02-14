@@ -9,9 +9,9 @@
 
 #define SELECT_USE_POLY	(11)
 #define TITLE_ANIM_POS_X	(SCREEN_WIDTH * 0.5)
-#define TITLE_ANIM_GEAR_HALFSIZE	(120)
+#define TITLE_ANIM_GEAR_HALFSIZE	(160)
 
-//テクスチャ割り当て(順は上に〃)
+//テクスチャ割り当て(順は下に記述)
 typedef enum
 {
 	TEXTYPE_TWALLL = 0,
@@ -123,32 +123,32 @@ void InitTitleAnim(void)
 			break;
 		case 6:
 			TitleAnim[i].pos = D3DXVECTOR3(TITLE_ANIM_GEAR_HALFSIZE/3, SCREEN_HEIGHT / 2, 0);
-			TitleAnim[i].fWidth = 20;
+			TitleAnim[i].fWidth = 25;
 			TitleAnim[i].fHeight = SCREEN_HEIGHT;
 			TitleAnim[i].Type = TEXTYPE_GEAR_CHAIN;
 			break;
 		case 7:
 			TitleAnim[i].pos = D3DXVECTOR3(SCREEN_WIDTH - (TITLE_ANIM_GEAR_HALFSIZE / 3), SCREEN_HEIGHT / 2, 0);
-			TitleAnim[i].fWidth = 20;
+			TitleAnim[i].fWidth = 25;
 			TitleAnim[i].fHeight = SCREEN_HEIGHT;
 			TitleAnim[i].Type = TEXTYPE_GEAR_CHAIN;
 			break;
 		case 8:
-			TitleAnim[i].pos = D3DXVECTOR3(TITLE_ANIM_POS_X -30, SCREEN_HEIGHT/2 - 20, 0);
-			TitleAnim[i].fWidth = 350;
-			TitleAnim[i].fHeight = 350;
+			TitleAnim[i].pos = D3DXVECTOR3(TITLE_ANIM_POS_X -140, SCREEN_HEIGHT / 2 - 20, 0);
+			TitleAnim[i].fWidth  = 450;
+			TitleAnim[i].fHeight = 450;
 			TitleAnim[i].Type = TEXTYPE_WALLGEAR;
 			break;
 		case 9:
-			TitleAnim[i].pos = D3DXVECTOR3(300, -200, 0);
-			TitleAnim[i].fWidth = 500;
-			TitleAnim[i].fHeight = 250;
+			TitleAnim[i].pos = D3DXVECTOR3(520, -200, 0);
+			TitleAnim[i].fWidth  = 720;
+			TitleAnim[i].fHeight = 420;
 			TitleAnim[i].Type = TEXTYPE_TITLE;
 			break;	
 		case 10:
-			TitleAnim[i].pos = D3DXVECTOR3(TITLE_ANIM_POS_X+20, SCREEN_HEIGHT / 2 + 30, 0);
-			TitleAnim[i].fWidth = 320;
-			TitleAnim[i].fHeight = 320;
+			TitleAnim[i].pos = D3DXVECTOR3(TITLE_ANIM_POS_X + 240, SCREEN_HEIGHT / 2 + 80, 0);
+			TitleAnim[i].fWidth  = 400;
+			TitleAnim[i].fHeight = 400;
 			TitleAnim[i].Type = TEXTYPE_WALLGEAR;
 
 		}
@@ -236,26 +236,23 @@ void UninitTitleAnim(void)
 //===============================================================================
 void UpdateTitleAnim(void)
 {
-	
-	
 	if (TitleAnim[8].rot.z < 3.14f*1.5f)
 	{
 		TitleAnim[8].rot.z  += (3.14f * 0.02f);
 		TitleAnim[10].rot.z -= (3.14f * 0.02f);
-
 	}
 	else
 	{
 		if (TitleAnim[0].pos.x > -(SCREEN_WIDTH / 2) + 256)
 		{
-			TitleAnim[0].pos.x -= 12.8f;
+			TitleAnim[0].pos.x -= 25.6f;
 			TitleAnim[2].rot.z -= 0.06f;
 			TitleAnim[4].rot.z -= 0.06f;
 			TitleAnimGear[0] += 0.025f;
 		}
 		if (TitleAnim[1].pos.x < (SCREEN_WIDTH / 2) + (SCREEN_WIDTH - 256))
 		{
-			TitleAnim[1].pos.x += 12.8f;
+			TitleAnim[1].pos.x += 25.6f;
 			TitleAnim[3].rot.z += 0.06f;
 			TitleAnim[5].rot.z += 0.06f;
 			TitleAnimGear[1] -= 0.025f;
@@ -273,8 +270,8 @@ void UpdateTitleAnim(void)
 		}
 	}
 	//初期壁とギアの相対座標
-	TitleAnim[8].pos = TitleAnim[0].pos + D3DXVECTOR3(-120, -80, 0);
-	TitleAnim[10].pos = TitleAnim[1].pos + D3DXVECTOR3(80, +120, 0);
+	TitleAnim[8].pos = TitleAnim[0].pos + D3DXVECTOR3(-140, -100, 0);
+	TitleAnim[10].pos = TitleAnim[1].pos + D3DXVECTOR3(120, +160, 0);
 
 	VERTEX_2D* pVtx;	//頂点情報のポインタ
 
@@ -316,6 +313,8 @@ void UpdateTitleAnim(void)
 		}
 		pVtx += 4;
 	}
+	//頂点バッファのアンロック
+	g_pVtxBuffTitleAnim->Unlock();
 }
 //===============================================================================
 //人数選択画面系の描画

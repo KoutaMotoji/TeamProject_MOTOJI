@@ -14,11 +14,11 @@
 #define DEFTITLE_SELECT	(10)
 #define TITLE_SELECT_COUNT	(5)
 
-#define TITLE_ANY_HEIGHT			(100)
-#define TITLE_START_WIDTH			(200)
-#define TITLE_TUTORIAL_WIDTH		(400)
-#define TITLE_FINISH_WIDTH			(150)
-#define TITLE_ZOOM_SIZE				(15)
+#define TITLE_ANY_HEIGHT			(150)
+#define TITLE_START_WIDTH			(300)
+#define TITLE_TUTORIAL_WIDTH		(600)
+#define TITLE_FINISH_WIDTH			(300)
+#define TITLE_ZOOM_SIZE				(25)
 
 //テクスチャ列挙
 static const char* TitleSelectName[DEFTITLE_SELECT]
@@ -93,25 +93,25 @@ void InitTitleSelect(void)
 			TitleInfo[i].fAngle = atan2f(TITLE_START_WIDTH, TITLE_ANY_HEIGHT);
 			TitleInfo[i].fLength = sqrtf(TITLE_START_WIDTH * TITLE_START_WIDTH + TITLE_ANY_HEIGHT * TITLE_ANY_HEIGHT) / 2.0f;
 			TitleInfo[i].Type = SELECT_TITLE_START_ON;
-			TitleInfo[i].pos = D3DXVECTOR3(300, 300, 0);
+			TitleInfo[i].pos = D3DXVECTOR3(450, 350, 0);
 			break;
 		case SELECTED_TUTORIAL:		//選択：チュートリアル
 			TitleInfo[i].fAngle = atan2f(TITLE_TUTORIAL_WIDTH, TITLE_ANY_HEIGHT);
 			TitleInfo[i].fLength = sqrtf(TITLE_TUTORIAL_WIDTH * TITLE_TUTORIAL_WIDTH + TITLE_ANY_HEIGHT * TITLE_ANY_HEIGHT) / 2.0f;
 			TitleInfo[i].Type = SELECT_TITLE_TUTORIAL_OFF;
-			TitleInfo[i].pos = D3DXVECTOR3(300, 400, 0);
+			TitleInfo[i].pos = D3DXVECTOR3(450, 500, 0);
 			break;
 		case SELECTED_RANKING:		//選択：ランキング
 			TitleInfo[i].fAngle = atan2f(TITLE_TUTORIAL_WIDTH, TITLE_ANY_HEIGHT);
 			TitleInfo[i].fLength = sqrtf(TITLE_TUTORIAL_WIDTH * TITLE_TUTORIAL_WIDTH + TITLE_ANY_HEIGHT * TITLE_ANY_HEIGHT) / 2.0f;
 			TitleInfo[i].Type = SELECT_TITLE_RANKING_OFF;
-			TitleInfo[i].pos = D3DXVECTOR3(300, 500, 0);
+			TitleInfo[i].pos = D3DXVECTOR3(450, 650, 0);
 			break;
 		case SELECTED_FINISH:		//選択：選択
 			TitleInfo[i].fAngle = atan2f(TITLE_FINISH_WIDTH, TITLE_ANY_HEIGHT);
 			TitleInfo[i].fLength = sqrtf(TITLE_FINISH_WIDTH * TITLE_FINISH_WIDTH + TITLE_ANY_HEIGHT * TITLE_ANY_HEIGHT) / 2.0f;
 			TitleInfo[i].Type = SELECT_TITLE_FINISH_OFF;
-			TitleInfo[i].pos = D3DXVECTOR3(300, 600, 0);
+			TitleInfo[i].pos = D3DXVECTOR3(450, 800, 0);
 			break;
 		case 4:
 			TitleInfo[i].fAngle = atan2f(SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -203,6 +203,10 @@ void UninitTitleSelect(void)
 //===============================================================================
 void UpdateTitleSelect(void)
 {
+	VERTEX_2D* pVtx;	//頂点情報のポインタ
+
+	//頂点バッファをロックして、頂点情報へのポインタを取得
+	g_pVtxBuffTitleSelect->Lock(0, 0, (void**)&pVtx, 0);
 	if (ReturnTitleAnimFinish() == true)
 	{
 		if (bSelectMode == false)
@@ -211,7 +215,7 @@ void UpdateTitleSelect(void)
 			{
 				if (TitleInfo[4].pos.x < (SCREEN_WIDTH*1.25))
 				{
-					TitleInfo[4].pos.x += SCREEN_WIDTH * 0.025f;
+					TitleInfo[4].pos.x += SCREEN_WIDTH * 0.035f;
 				}
 				if (GetJoypadTrigger(JOYKEY_UP,0) == true)
 				{
@@ -269,7 +273,7 @@ void UpdateTitleSelect(void)
 			{
 				if (TitleInfo[4].pos.x > (SCREEN_WIDTH *0.5f))
 				{
-					TitleInfo[4].pos.x -= SCREEN_WIDTH * 0.025f;
+					TitleInfo[4].pos.x -= SCREEN_WIDTH * 0.035f;
 				}
 				if (GetJoypadTrigger(JOYKEY_UP,0) == true || GetJoypadTrigger(JOYKEY_DOWN,0) == true)
 				{
@@ -308,10 +312,7 @@ void UpdateTitleSelect(void)
 		{
 			nZoomTitle += TITLE_ZOOM_SIZE * 0.1f;;
 		}
-		VERTEX_2D* pVtx;	//頂点情報のポインタ
 
-		//頂点バッファをロックして、頂点情報へのポインタを取得
-		g_pVtxBuffTitleSelect->Lock(0, 0, (void**)&pVtx, 0);
 
 		for (int nCnt = 0; nCnt < TITLE_SELECT_COUNT; nCnt++)
 		{
@@ -352,8 +353,6 @@ void UpdateTitleSelect(void)
 			pVtx += 4;
 		}
 
-		//頂点バッファのアンロック
-		g_pVtxBuffTitleSelect->Unlock();
 		//モード決定
 		if (GetJoypadTrigger(JOYKEY_A,0) == true && bSelectMode == false)
 		{
@@ -372,6 +371,9 @@ void UpdateTitleSelect(void)
 			}
 		}
 	}
+
+	//頂点バッファのアンロック
+	g_pVtxBuffTitleSelect->Unlock();
 }
 
 //===============================================================================

@@ -37,9 +37,9 @@ void InitGame(void)
 	//頂点バッファをロックして、頂点情報へのポインタを取得
 	g_pVtxBuffGame->Lock(0, 0, (void**)&pVtx, 0);
 	pVtx[0].pos = D3DXVECTOR3(0, 0, 0.0f);
-	pVtx[1].pos = D3DXVECTOR3(1280, 0, 0.0f);
-	pVtx[2].pos = D3DXVECTOR3(0, 720, 0.0f);
-	pVtx[3].pos = D3DXVECTOR3(1280, 720, 0.0f);
+	pVtx[1].pos = D3DXVECTOR3(SCREEN_WIDTH, 0, 0.0f);
+	pVtx[2].pos = D3DXVECTOR3(0, SCREEN_HEIGHT, 0.0f);
+	pVtx[3].pos = D3DXVECTOR3(SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f);
 
 	//rhwの設定
 	pVtx[0].rhw = 1.0f;
@@ -93,20 +93,6 @@ void UpdateGame(void)
 {
 	UpdateScore();
 
-	VERTEX_2D* pVtx;	//頂点情報のポインタ
-
-//頂点バッファをロックして、頂点情報へのポインタを取得
-	g_pVtxBuffGame->Lock(0, 0, (void**)&pVtx, 0);
-	//テクスチャ座標の設定
-	pVtx[0].tex = D3DXVECTOR2(0.0f +g_f, 0.0f);
-	pVtx[1].tex = D3DXVECTOR2(1.0f +g_f, 0.0f);
-	pVtx[2].tex = D3DXVECTOR2(0.0f +g_f, 1.0f);
-	pVtx[3].tex = D3DXVECTOR2(1.0f +g_f, 1.0f);
-
-	g_f += 0.04f;
-
-	//頂点バッファのアンロック
-	g_pVtxBuffGame->Unlock();
 	if (GetJoypadTrigger(JOYKEY_A, 0) == true || GetKeyboardTrigger(DIK_RETURN) == true)
 	{
 		SetMode(MODE_RESULT);
@@ -128,7 +114,7 @@ void DrawGame(void)
 	//ポリゴンの描画
 	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP,
 		0,
-		4);
+		2);
 	DrawScore();
 }
 

@@ -15,7 +15,9 @@
 LPDIRECT3DTEXTURE9 g_pTextureTitle = NULL;
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffTitle = NULL;
 bool bRank;
+//===============================================================================
 //タイトル画面の初期化処理
+//===============================================================================
 void InitTitle(void)
 {
 	LPDIRECT3DDEVICE9 pDevice;
@@ -38,9 +40,9 @@ void InitTitle(void)
 	//頂点バッファをロックして、頂点情報へのポインタを取得
 	g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);
 	pVtx[0].pos = D3DXVECTOR3(0, 0, 0.0f);
-	pVtx[1].pos = D3DXVECTOR3(1280, 0, 0.0f);
-	pVtx[2].pos = D3DXVECTOR3(0, 720, 0.0f);
-	pVtx[3].pos = D3DXVECTOR3(1280, 720, 0.0f);
+	pVtx[1].pos = D3DXVECTOR3(SCREEN_WIDTH, 0, 0.0f);
+	pVtx[2].pos = D3DXVECTOR3(0, SCREEN_HEIGHT, 0.0f);
+	pVtx[3].pos = D3DXVECTOR3(SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f);
 
 	//rhwの設定
 	pVtx[0].rhw = 1.0f;
@@ -72,7 +74,9 @@ void InitTitle(void)
 	bRank = false;
 }
 
+//===============================================================================
 //タイトルの終了処理
+//===============================================================================
 void UninitTitle(void)
 {
 	//テクスチャの破棄
@@ -92,19 +96,24 @@ void UninitTitle(void)
 	UninitPlayerCount();
 }
 
+//===============================================================================
 //タイトルの更新処理
+//===============================================================================
 void UpdateTitle(void)
 {
 	UpdateTitleSelect();
 	UpdateTitleAnim();
 	UpdatePlayerCount();
+
 	if (bRank == true)
 	{
 		SetMode(MODE_RANKING);
 	}
 }
 
+//===============================================================================
 //タイトル描画
+//===============================================================================
 void DrawTitle(void)
 {
 	LPDIRECT3DDEVICE9 pDevice;
@@ -119,12 +128,16 @@ void DrawTitle(void)
 	//ポリゴンの描画
 	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP,
 		0,
-		4);
+		2);
+
 	DrawTitleSelect();
 	DrawPlayerCount();
 	DrawTitleAnim();
 }
 
+//===============================================================================
+//ランキング画面遷移の判定処理
+//===============================================================================
 void MovetoRanking(void)
 {
 	bRank = true;
