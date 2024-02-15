@@ -17,7 +17,6 @@ typedef enum
 //グローバル変数
 LPDIRECT3DTEXTURE9 g_pTextureResult = NULL;
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffResult = NULL;
-float g_PAPAPAPAP;
 int ResultType;
 //タイトル画面の初期化処理
 void InitResult(void)
@@ -30,7 +29,6 @@ void InitResult(void)
 		"data\\TEXTURE\\result.jpg",
 		&g_pTextureResult);
 
-
 	//頂点バッファの生成
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4,
 		D3DUSAGE_WRITEONLY,
@@ -38,8 +36,8 @@ void InitResult(void)
 		D3DPOOL_MANAGED,
 		&g_pVtxBuffResult,
 		NULL);
-	VERTEX_2D* pVtx;	//頂点情報のポインタ
 
+	VERTEX_2D* pVtx;	//頂点情報のポインタ
 	//頂点バッファをロックして、頂点情報へのポインタを取得
 	g_pVtxBuffResult->Lock(0, 0, (void**)&pVtx, 0);
 	pVtx[0].pos = D3DXVECTOR3(0, 0, 0.0f);
@@ -59,19 +57,14 @@ void InitResult(void)
 	pVtx[2].col = D3DCOLOR_RGBA(255, 255, 255, 255);
 	pVtx[3].col = D3DCOLOR_RGBA(255, 255, 255, 255);
 
-
 	//テクスチャ座標の設定
 	pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
 	pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
 	pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
 	pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
 
-
-
 	//頂点バッファのアンロック
-	g_pVtxBuffResult->Unlock();
-	g_PAPAPAPAP = 0;
-	
+	g_pVtxBuffResult->Unlock();	
 }
 
 //タイトルの終了処理
@@ -118,5 +111,4 @@ void DrawResult(void)
 	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP,
 		0,
 		2);
-
 }

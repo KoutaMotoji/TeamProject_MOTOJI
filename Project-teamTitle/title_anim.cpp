@@ -244,18 +244,18 @@ void UpdateTitleAnim(void)
 	else
 	{
 		if (TitleAnim[0].pos.x > -(SCREEN_WIDTH / 2) + 256)
-		{
-			TitleAnim[0].pos.x -= 25.6f;
-			TitleAnim[2].rot.z -= 0.06f;
-			TitleAnim[4].rot.z -= 0.06f;
-			TitleAnimGear[0] += 0.025f;
+		{//壁開くアニメーションの左側
+			TitleAnim[0].pos.x -= 25.6f;	//左壁
+			TitleAnim[2].rot.z -= 0.06f;	//左上歯車
+			TitleAnim[4].rot.z -= 0.06f;	//左下歯車
+			TitleAnimGear[0] += 0.025f;		//左鎖アニメーション
 		}
 		if (TitleAnim[1].pos.x < (SCREEN_WIDTH / 2) + (SCREEN_WIDTH - 256))
-		{
-			TitleAnim[1].pos.x += 25.6f;
-			TitleAnim[3].rot.z += 0.06f;
-			TitleAnim[5].rot.z += 0.06f;
-			TitleAnimGear[1] -= 0.025f;
+		{//壁開くアニメーションの右側
+			TitleAnim[1].pos.x += 25.6f;	//右壁
+			TitleAnim[3].rot.z += 0.06f;	//右上歯車
+			TitleAnim[5].rot.z += 0.06f;	//右下歯車
+			TitleAnimGear[1] -= 0.025f;		//右鎖アニメーション
 		}
 		if (TitleAnim[0].pos.x < -(SCREEN_WIDTH / 2) + 256 && TitleAnim[1].pos.x >(SCREEN_WIDTH / 2) - 256)
 		{
@@ -280,7 +280,6 @@ void UpdateTitleAnim(void)
 
 	for (int nCnt = 0; nCnt < SELECT_USE_POLY; nCnt++)
 	{
-
 		//頂点座標の設定
 		pVtx[0].pos.x = TitleAnim[nCnt].pos.x + sinf(TitleAnim[nCnt].rot.z - (D3DX_PI - TitleAnim[nCnt].fAngle)) * TitleAnim[nCnt].fLength;
 		pVtx[0].pos.y = TitleAnim[nCnt].pos.y + cosf(TitleAnim[nCnt].rot.z - (D3DX_PI - TitleAnim[nCnt].fAngle)) * TitleAnim[nCnt].fLength;

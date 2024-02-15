@@ -65,11 +65,8 @@ void InitTitle(void)
 	//頂点バッファのアンロック
 	g_pVtxBuffTitle->Unlock();
 
-	//InitFade();
-	//SetFade(FADE_IN);
-
-	InitTitleSelect();
 	InitTitleAnim();
+	InitTitleSelect();
 	InitPlayerCount();
 	bRank = false;
 }
@@ -79,6 +76,9 @@ void InitTitle(void)
 //===============================================================================
 void UninitTitle(void)
 {
+	UninitTitleSelect();
+	UninitTitleAnim();
+	UninitPlayerCount();
 	//テクスチャの破棄
 	if (g_pTextureTitle != NULL)
 	{
@@ -91,9 +91,6 @@ void UninitTitle(void)
 		g_pVtxBuffTitle->Release();
 		g_pVtxBuffTitle = NULL;
 	}
-	UninitTitleSelect();
-	UninitTitleAnim();
-	UninitPlayerCount();
 }
 
 //===============================================================================

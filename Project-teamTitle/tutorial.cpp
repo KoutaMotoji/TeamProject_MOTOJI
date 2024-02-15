@@ -52,21 +52,15 @@ void InitTutorial(void)
 	pVtx[2].col = D3DCOLOR_RGBA(255, 255, 255, 255);
 	pVtx[3].col = D3DCOLOR_RGBA(255, 255, 255, 255);
 
-
 	//テクスチャ座標の設定
 	pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
 	pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
 	pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
 	pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
 
-
-
 	//頂点バッファのアンロック
 	g_pVtxBuffTutorial->Unlock();
 
-	//InitFade();
-	//SetFade(FADE_IN);
-	g_TutorialCnt = 0;
 	InitScore();
 }
 

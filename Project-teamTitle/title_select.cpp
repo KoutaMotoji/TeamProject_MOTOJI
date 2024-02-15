@@ -181,7 +181,7 @@ void InitTitleSelect(void)
 //===============================================================================
 void UninitTitleSelect(void)
 {
-	for (int nCnt = 0; nCnt < SELECT_TITLE_MAX; nCnt++)
+	for (int nCnt = 0; nCnt < DEFTITLE_SELECT; nCnt++)
 	{
 		//テクスチャの破棄
 		if (g_pTextureTitleSelect[nCnt] != NULL)
@@ -312,7 +312,6 @@ void UpdateTitleSelect(void)
 		{
 			nZoomTitle += TITLE_ZOOM_SIZE * 0.1f;;
 		}
-
 
 		for (int nCnt = 0; nCnt < TITLE_SELECT_COUNT; nCnt++)
 		{
